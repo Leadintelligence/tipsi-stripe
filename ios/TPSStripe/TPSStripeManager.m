@@ -298,11 +298,11 @@ void initializeTPSPaymentNetworksWithConditionalMappings() {
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(init:(NSString *)stripeAccountId) {
+RCT_EXPORT_METHOD(setStripeAccount:(NSString *)stripeAccountId) {
     stripeAccount = stripeAccountId;
 }
 
-RCT_EXPORT_METHOD(setStripeAccount:(NSDictionary *)options errorCodes:(NSDictionary *)errors) {
+RCT_EXPORT_METHOD(init:(NSDictionary *)options errorCodes:(NSDictionary *)errors) {
     publishableKey = options[@"publishableKey"];
     merchantId = options[@"merchantId"];
     errorCodes = errors;
