@@ -115,7 +115,6 @@ RCT_ENUM_CONVERTER(STPPaymentMethodType,
                       @"card": @(STPPaymentMethodTypeCard),
                       @"iDEAL": @(STPPaymentMethodTypeiDEAL),
                       @"card_present": @(STPPaymentMethodTypeCardPresent),
-                      @"fpx": @(STPPaymentMethodTypeUnknown),
                       @"unknown": @(STPPaymentMethodTypeUnknown),
                       }),
                    STPPaymentMethodTypeUnknown,
@@ -126,9 +125,7 @@ RCT_ENUM_CONVERTER(STPPaymentMethodType,
         case STPPaymentMethodTypeCard: return @"card";
         case STPPaymentMethodTypeiDEAL: return @"iDEAL";
         case STPPaymentMethodTypeCardPresent: return @"card_present";
-        case STPPaymentMethodTypeFPX: return @"fpx";
-        case STPPaymentMethodTypeUnknown:
-        default: return @"unknown";
+        case STPPaymentMethodTypeUnknown: return @"unknown";
     }
 }
 
@@ -163,7 +160,6 @@ RCT_ENUM_CONVERTER(STPPaymentIntentStatus,
             TPSEntry(requires_payment_method, RequiresPaymentMethod)
             TPSEntry(requires_confirmation, RequiresConfirmation)
             TPSEntry(succeeded, Succeeded)
-            default: return TPSStripeParam(PaymentIntentStatus, unknown);
     }
 #undef TPSEntry
 }
@@ -193,7 +189,6 @@ RCT_ENUM_CONVERTER(STPSetupIntentStatus,
             TPSEntry(requires_payment_method, RequiresPaymentMethod)
             TPSEntry(requires_confirmation, RequiresConfirmation)
             TPSEntry(succeeded, Succeeded)
-            default: return TPSStripeParam(SetupIntentStatus, unknown);
     }
 #undef TPSEntry
 }
@@ -298,15 +293,15 @@ void initializeTPSPaymentNetworksWithConditionalMappings() {
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(setStripeAccount:(NSString *)stripeAccountId) {
-    stripeAccount = stripeAccountId;
-}
-
 RCT_EXPORT_METHOD(init:(NSDictionary *)options errorCodes:(NSDictionary *)errors) {
     publishableKey = options[@"publishableKey"];
     merchantId = options[@"merchantId"];
     errorCodes = errors;
     [Stripe setDefaultPublishableKey:publishableKey];
+}
+
+RCT_EXPORT_METHOD(setStripeAccount:(NSString *)account) {
+    stripeAccount = account;
 }
 
 RCT_EXPORT_METHOD(deviceSupportsApplePay:(RCTPromiseResolveBlock)resolve
