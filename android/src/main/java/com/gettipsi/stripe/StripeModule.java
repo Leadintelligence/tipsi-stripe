@@ -101,6 +101,7 @@ public class StripeModule extends ReactContextBaseJavaModule {
   private Source mCreatedSource;
 
   private String mPublicKey;
+  private String mStripeAccountId;
   private Stripe mStripe;
   private PayFlow mPayFlow;
   private ReadableMap mErrorCodes;
@@ -174,6 +175,14 @@ public class StripeModule extends ReactContextBaseJavaModule {
   private static int androidPayModeToEnvironment(@NonNull String androidPayMode) {
     ArgCheck.notEmptyString(androidPayMode);
     return ANDROID_PAY_MODE_TEST.equals(androidPayMode.toLowerCase()) ? WalletConstants.ENVIRONMENT_TEST : WalletConstants.ENVIRONMENT_PRODUCTION;
+  }
+  
+  @ReactMethod
+  public void setStripeAccount(@NonNull String newStripeAccountId) {
+    if(!TextUtils.equals(newStripeAccountId, mStripeAccountId)){
+      mStripeAccountId = newStripeAccountId;
+      mStripe = new Stripe(getReactApplicationContext(), mPublicKey, newStripeAccountId);   
+    }
   }
 
   @ReactMethod
