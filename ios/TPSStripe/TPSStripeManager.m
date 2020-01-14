@@ -327,7 +327,6 @@ RCT_EXPORT_METHOD(potentiallyAvailableNativePayNetworks:(RCTPromiseResolveBlock)
     resolve([PKPaymentAuthorizationViewController canMakePaymentsUsingNetworks:networks] ? paymentNetworksStrings : nil);
 }
 
-
 RCT_EXPORT_METHOD(createPaymentMethod:(NSDictionary<NSString *, id> *)untypedParams
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
@@ -1234,7 +1233,7 @@ RCT_EXPORT_METHOD(openApplePaySetup) {
 
     STPAPIClient *stripeAPIClient = [self newAPIClient];
 
-    [stripeAPIClient createTokenWithPayment:payment completion:^(STPToken * _Nullable token, NSError * _Nullable error) {
+    [stripeAPIClient createPaymentMethodWithPayment:payment completion:^(STPPaymentMethod * _Nullable paymentMethod, NSError * _Nullable error) {
         self->requestIsCompleted = YES;
 
         if (error) {
@@ -1242,7 +1241,7 @@ RCT_EXPORT_METHOD(openApplePaySetup) {
             self->applePayStripeError = error;
             [self resolveApplePayCompletion:PKPaymentAuthorizationStatusFailure];
         } else {
-            NSDictionary *result = [self convertTokenObject:token];
+            NSDictionary *result = [self convertPaymentMethodObject:paymentMethod];
             NSDictionary *extra = @{
                                     @"billingContact": [self contactDetails:payment.billingContact] ?: [NSNull null],
                                     @"shippingContact": [self contactDetails:payment.shippingContact] ?: [NSNull null],
@@ -1297,6 +1296,32 @@ RCT_EXPORT_METHOD(openApplePaySetup) {
     // Singleton sharedHandler should have the matching API Client!
     STPPaymentHandler.sharedHandler.apiClient = client;
     return client;
+}
+
+- (NSDictionary *)convertPaymentMethodObject:(STPPaymentMethod*)paymentMethod {
+    NSMutableDictionary *result = [@{} mutableCopy];
+
+    // Token
+    [result setValue:paymentMethod.stripeId forKey:@"paymentMethodId"];
+    [result setValue:@([paymentMethod.created timeIntervalSince1970]) forKey:@"created"];
+    [result setValue:@(paymentMethod.liveMode) forKey:@"livemode"];
+    [result setValue:paymentMethod.customerId forKey:@"customerId"];
+
+    // Card
+    if (paymentMethod.card) {
+        NSMutableDictionary *card = [@{} mutableCopy];
+        [result setValue:card forKey:@"card"];
+
+        [card setValue:[self cardBrandAsPresentableBrandString:paymentMethod.card.brand] forKey:@"brand"];
+        [card setValue:paymentMethod.card.funding forKey:@"funding"];
+        [card setValue:paymentMethod.card.last4 forKey:@"last4"];
+        [card setValue:@(paymentMethod.card.expMonth) forKey:@"expMonth"];
+        [card setValue:@(paymentMethod.card.expYear) forKey:@"expYear"];
+        [card setValue:paymentMethod.card.country forKey:@"country"];
+        [card setValue:paymentMethod.card.fingerprint forKey:@"fingerprint"];
+    }
+
+    return result;
 }
 
 - (NSDictionary *)convertTokenObject:(STPToken*)token {
