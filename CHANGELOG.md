@@ -1,6 +1,14 @@
 # Changelog
 
-## [8.0.0] - 2019-09-01
+## [8.0.0-beta.10] - 2020-04-02
+
+- Fix ios billingDetails [#592](https://github.com/tipsi/tipsi-stripe/pull/592)
+- Fixed compilation error for 8.0.0.beta9 due to fpx issue [#628](https://github.com/tipsi/tipsi-stripe/pull/628)
+- Upgrade tipsi-android to 1.4.6 [#563](https://github.com/tipsi/tipsi-stripe/pull/563)
+- Fix build on xcode 11.4 [#563](https://github.com/tipsi/tipsi-stripe/pull/563)
+
+
+## [8.0.0-beta.9] - 2019-09-01
 
 ### Android
 
@@ -45,7 +53,6 @@
 
 - Added .circleci config
 - Added eslint & prettier config
-
 
 ## [7.5.0] - 2019-04-22
 
