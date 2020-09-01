@@ -125,7 +125,8 @@ RCT_ENUM_CONVERTER(STPPaymentMethodType,
         case STPPaymentMethodTypeCard: return @"card";
         case STPPaymentMethodTypeiDEAL: return @"iDEAL";
         case STPPaymentMethodTypeCardPresent: return @"card_present";
-        case STPPaymentMethodTypeUnknown: return @"unknown";
+        case STPPaymentMethodTypeUnknown:
+        default: return @"unknown";
     }
 }
 
